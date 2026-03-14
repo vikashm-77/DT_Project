@@ -11,8 +11,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <style>
 
-/* GLOBAL */
-
 body{
 font-family:Arial;
 margin:0;
@@ -29,9 +27,7 @@ align-items:center;
 background:linear-gradient(135deg,#1e3c72,#2a5298);
 }
 
-.auth-container{
-width:380px;
-}
+.auth-container{width:380px;}
 
 .card{
 background:rgba(255,255,255,0.1);
@@ -43,14 +39,7 @@ color:white;
 box-shadow:0 8px 25px rgba(0,0,0,0.3);
 }
 
-.logo{
-width:80px;
-margin-bottom:15px;
-}
-
-.card h2{
-margin-bottom:15px;
-}
+.logo{width:80px;margin-bottom:10px;}
 
 .card input{
 width:100%;
@@ -60,32 +49,16 @@ border:none;
 border-radius:6px;
 background:rgba(255,255,255,0.2);
 color:white;
-outline:none;
-}
-
-.card input::placeholder{
-color:#ddd;
 }
 
 .card button{
 width:100%;
 padding:12px;
-margin-top:10px;
 background:#00c6ff;
 border:none;
 border-radius:6px;
 color:white;
-font-weight:bold;
 cursor:pointer;
-transition:0.3s;
-}
-
-.card button:hover{
-background:#0095f6;
-}
-
-.switch{
-margin-top:10px;
 }
 
 .switch span{
@@ -105,8 +78,6 @@ max-width:1000px;
 margin:auto;
 }
 
-/* NAV */
-
 .nav{
 display:flex;
 gap:20px;
@@ -121,15 +92,7 @@ padding:18px;
 text-align:center;
 border-radius:10px;
 cursor:pointer;
-transition:0.3s;
 }
-
-.navBox:hover{
-background:#0077cc;
-transform:scale(1.05);
-}
-
-/* PROFILE */
 
 .profileHeader{
 background:white;
@@ -139,14 +102,9 @@ margin-bottom:20px;
 display:flex;
 align-items:center;
 gap:20px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-.profileHeader img{
-width:80px;
-}
-
-/* INFO */
+.profileHeader img{width:80px;}
 
 .infoBox{
 background:white;
@@ -154,8 +112,6 @@ padding:20px;
 border-radius:10px;
 margin-bottom:20px;
 }
-
-/* STATS */
 
 .stats{
 display:flex;
@@ -171,8 +127,6 @@ border-radius:10px;
 text-align:center;
 }
 
-/* PAGE */
-
 .page{
 display:none;
 background:white;
@@ -181,7 +135,7 @@ border-radius:10px;
 margin-bottom:40px;
 }
 
-textarea,select{
+textarea,select,input[type=file]{
 width:100%;
 padding:10px;
 margin:10px 0;
@@ -227,16 +181,30 @@ color:#ff6600;
 font-weight:bold;
 }
 
-/* BUTTONS */
+.editBtn{
+background:orange;
+padding:8px 12px;
+border:none;
+margin-top:10px;
+}
 
-.editBtn{background:orange;width:auto;padding:8px 12px;margin-top:10px}
-.deleteBtn{background:red;width:auto;padding:8px 12px;margin-top:10px;color:white}
+.deleteBtn{
+background:red;
+padding:8px 12px;
+border:none;
+color:white;
+margin-top:10px;
+}
 
 .logout{
 background:red;
-width:200px;
-margin:auto;
+padding:8px 18px;
+border:none;
+border-radius:6px;
+color:white;
 display:block;
+margin:20px auto;
+cursor:pointer;
 }
 
 /* MODAL */
@@ -275,6 +243,7 @@ gap:10px;
 
 .cancelBtn{
 background:red;
+color:white;
 }
 
 </style>
@@ -300,10 +269,9 @@ background:red;
 
 <button onclick="login()">Login</button>
 
-<div class="switch">
-Don't have account?
+<p>Don't have account?
 <span onclick="showSignup()">Sign up</span>
-</div>
+</p>
 
 </div>
 
@@ -318,10 +286,9 @@ Don't have account?
 
 <button onclick="register()">Sign Up</button>
 
-<div class="switch">
-Already have account?
+<p>Already account?
 <span onclick="showLogin()">Login</span>
-</div>
+</p>
 
 </div>
 
@@ -329,7 +296,7 @@ Already have account?
 
 </div>
 
-<!-- DASHBOARD -->
+<!-- APP -->
 
 <div id="app">
 
@@ -408,6 +375,7 @@ Already have account?
 
 <label>Location</label>
 <select id="location">
+<option value="">Select Location</option>
 <option>Canteen</option>
 <option>Washroom</option>
 <option>Classroom</option>
@@ -453,7 +421,7 @@ onkeyup="searchIssues()">
 
 </div>
 
-<!-- EDIT POPUP -->
+<!-- EDIT MODAL -->
 
 <div id="editModal" class="modal">
 
@@ -501,12 +469,14 @@ let issues = JSON.parse(localStorage.getItem("issues")) || [];
 let currentUser="";
 let editIndex=null;
 
-/* LOGIN */
+/* LOGIN FIXED */
 
 function login(){
 
-let u=loginUser.value;
-let p=loginPass.value;
+users = JSON.parse(localStorage.getItem("users")) || [];
+
+let u=loginUser.value.trim();
+let p=loginPass.value.trim();
 
 let user=users.find(x=>x.username===u && x.password===p);
 
@@ -520,19 +490,31 @@ username.innerText=u;
 
 updateStats();
 
-}else alert("Invalid login");
+}else{
+alert("Invalid username or password");
+}
 
 }
 
-/* SIGNUP */
+/* SIGNUP FIXED */
 
 function register(){
 
-users.push({username:regUser.value,password:regPass.value});
+let u = regUser.value.trim();
+let p = regPass.value.trim();
+
+if(!u || !p){
+alert("Please enter username and password");
+return;
+}
+
+users.push({username:u,password:p});
 
 localStorage.setItem("users",JSON.stringify(users));
 
-alert("Account created");
+users = JSON.parse(localStorage.getItem("users"));
+
+alert("Account created successfully");
 
 showLogin();
 
@@ -565,7 +547,7 @@ if(id==="statusPage") displayStatus();
 
 }
 
-/* REPORT ISSUE */
+/* ISSUE REPORT */
 
 function submitIssue(){
 
@@ -625,11 +607,8 @@ ${i.image?`<img src="${i.image}">`:""}
 
 <br>
 
-<button class="editBtn"
-onclick="editIssue(${index})">Edit</button>
-
-<button class="deleteBtn"
-onclick="deleteIssue(${index})">Delete</button>
+<button class="editBtn" onclick="editIssue(${index})">Edit</button>
+<button class="deleteBtn" onclick="deleteIssue(${index})">Delete</button>
 
 </div>
 
